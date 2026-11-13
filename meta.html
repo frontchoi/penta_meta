@@ -1,0 +1,164 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <style>
+      body {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        background-color: #f3f5f9;
+      }
+      p {
+        padding-top: 50px;
+        font-size: 16px;
+        text-align: center;
+        line-height: 28px;
+        color: #2188fe;
+      }
+      p span {
+        font-weight: bold;
+        font-size: 14px;
+        color: #666;
+      }
+      ul {
+        list-style: none;
+        width: 80vw;
+      }
+      ul li img {
+        width: 100%;
+        cursor: zoom-in;
+      }
+
+      /* 레이어 모달 */
+      .modal {
+        position: fixed;
+        inset: 0;
+        z-index: 1000;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 40px;
+        background: rgba(0, 0, 0, 0.6);
+        opacity: 0;
+        visibility: hidden;
+        transition:
+          opacity 0.25s ease,
+          visibility 0.25s ease;
+      }
+      .modal.is-open {
+        opacity: 1;
+        visibility: visible;
+      }
+      .modal__content {
+        position: relative;
+        max-width: 90vw;
+        max-height: 90vh;
+        transform: scale(0.96);
+        transition: transform 0.25s ease;
+      }
+      .modal.is-open .modal__content {
+        transform: scale(1);
+      }
+      .modal__content img {
+        display: block;
+        max-width: 90vw;
+        max-height: 90vh;
+        object-fit: contain;
+        border-radius: 8px;
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.35);
+        background: #fff;
+      }
+      .modal__close {
+        position: absolute;
+        top: -16px;
+        right: -16px;
+        width: 36px;
+        height: 36px;
+        border: none;
+        border-radius: 50%;
+        background: #fff;
+        color: #333;
+        font-size: 22px;
+        line-height: 36px;
+        cursor: pointer;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+      }
+      body.modal-open {
+        overflow: hidden;
+      }
+    </style>
+  </head>
+  <body>
+    <p>
+      본사에서 JSP로 개발한 솔루션을 React로 마이그레이션하면서, 테이블 레이아웃
+      기반의 오래된 UI를 현대적이고 깔끔한 UI로 개선하였습니다.<br />또한 복잡한
+      사용자 동선과 새 창 팝업을 정리하여, 불필요한 과정은 줄이고 레이어 모달로
+      대체하는 등 사용 편의성을 높였습니다.
+      <br />
+      <br />
+      <span>🔎​ 이미지를 클릭하면 개선된 화면을 크게 볼 수 있습니다.</span>
+    </p>
+    <ul>
+      <li><img src="./01.png" /></li>
+      <li><img src="./02.png" /></li>
+      <li><img src="./03.png" /></li>
+      <li><img src="./04.png" /></li>
+      <li><img src="./05.png" /></li>
+      <li><img src="./06.png" /></li>
+      <li><img src="./07.png" /></li>
+      <li><img src="./08.png" /></li>
+      <li><img src="./09.png" /></li>
+    </ul>
+
+    <div class="modal" id="imageModal" aria-hidden="true">
+      <div class="modal__content" role="dialog" aria-modal="true">
+        <button type="button" class="modal__close" aria-label="닫기">
+          &times;
+        </button>
+        <img src="" alt="" />
+      </div>
+    </div>
+
+    <script>
+      (function () {
+        var modal = document.getElementById('imageModal');
+        var modalImg = modal.querySelector('img');
+        var closeBtn = modal.querySelector('.modal__close');
+
+        function openModal(src) {
+          modalImg.src = src;
+          modal.classList.add('is-open');
+          modal.setAttribute('aria-hidden', 'false');
+          document.body.classList.add('modal-open');
+        }
+
+        function closeModal() {
+          modal.classList.remove('is-open');
+          modal.setAttribute('aria-hidden', 'true');
+          document.body.classList.remove('modal-open');
+        }
+
+        // 01.png 클릭 → new_01.png 표시
+        document.querySelectorAll('ul li img').forEach(function (img) {
+          img.addEventListener('click', function () {
+            var file = img.getAttribute('src').split('/').pop();
+            openModal('./new_' + file);
+          });
+        });
+
+        closeBtn.addEventListener('click', closeModal);
+        modal.addEventListener('click', function (e) {
+          if (e.target === modal) closeModal(); // 배경 클릭 시 닫기
+        });
+        document.addEventListener('keydown', function (e) {
+          if (e.key === 'Escape' && modal.classList.contains('is-open'))
+            closeModal();
+        });
+      })();
+    </script>
+  </body>
+</html>
